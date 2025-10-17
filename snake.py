@@ -128,6 +128,10 @@ def main():
     running = True
     game_over = False
     
+    # Time-based scoring variables
+    last_score_time = pygame.time.get_ticks()
+    score_interval = 2000  # 2 seconds between score increments
+    
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -137,6 +141,8 @@ def main():
                     snake.reset()
                     food.randomize_position()
                     game_over = False
+                    # Reset time tracking when restarting
+                    last_score_time = pygame.time.get_ticks()
                 elif not game_over:
                     if event.key == pygame.K_UP and snake.direction != (0, 1):
                         snake.direction = (0, -1)
@@ -159,6 +165,12 @@ def main():
                 # Make sure food doesn't appear on snake
                 while food.position in snake.positions:
                     food.randomize_position()
+            
+            # Add time-based score increment
+            current_time = pygame.time.get_ticks()
+            if current_time - last_score_time >= score_interval:
+                snake.score += 1
+                last_score_time = current_time
         
         # Draw everything
         screen.fill(BLACK)
